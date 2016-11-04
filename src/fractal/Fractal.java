@@ -11,19 +11,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -62,7 +54,7 @@ public class Fractal extends JFrame {
         for (int i = 0; i < numberIterations; i++) {
             fractal.iterate();
         }
-        Timer t = new Timer(50, (ActionEvent e) -> {
+        Timer t = new Timer(20, (ActionEvent e) -> {
             fractal.repaint();
         });
         
@@ -76,13 +68,21 @@ public class Fractal extends JFrame {
      */
     @Override
     public void paint(Graphics g) {
+        
+        // Sets up a new image for double buffering
         Image base = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
+        
+        // Graphics 2D for custom stroke for drawing shapes
         Graphics2D l = (Graphics2D) base.getGraphics();
+        
+        // Fill the background with black
         l.setStroke(new BasicStroke(5));
         l.setColor(Color.black);
         l.fillRect(0, 0, 500, 500);
+        
+        // For each iteration that is required
         for (int i = 0; i < iteration; i++) {
-            l.setColor(new Color((int)(125*Math.sin(rotation/10.0)+125),(int)(125*Math.sin(-rotation/10.0)+125),255));
+            l.setColor(new Color((int)(125*Math.sin(rotation/1000)+125),(int)(125*Math.sin(-rotation/1000)+125),255));
             l.drawOval(5, 5, 490, 490);
             l.drawOval(5, 5, 85, 85);
             l.drawOval(500 - 5 - 85, 5, 85, 85);
@@ -99,12 +99,10 @@ public class Fractal extends JFrame {
             AffineTransformOp rg = new AffineTransformOp(trns, AffineTransformOp.TYPE_BILINEAR);
             subimage = rg.filter(subimage, null);
             l.drawImage(subimage, 0, 0, null);
-            
-            g.drawImage(base, 0, 20, null);
-            //lastIteration++;
-            rotation = (rotation + 1 > 360)? 0: rotation + 1;
-            
         }
+        
+        g.drawImage(base, 0, 20, null);
+        rotation = (rotation + 1 > 360)? 0: rotation + 1;
     }
     
     public void iterate() {
